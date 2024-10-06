@@ -1,0 +1,43 @@
+services:
+  # User Service
+  user-service:
+    build: ./user-service
+    container_name: user-service
+    ports:
+      - "4001:4001"
+    depends_on:
+      - mongo
+      - redis
+      # - kafka
+    networks:
+      - ecommerce-network
+
+  # Product Service
+  product-service:
+    build: ./product-service
+    container_name: product-service
+    ports:
+      - "4002:4002"
+    depends_on:
+      - mongo
+      - redis
+      # - kafka
+    networks:
+      - ecommerce-network
+
+  # Apollo Gateway Service
+  gateway:
+    build:
+      context: ./gateway
+    container_name: gateway
+    ports:
+      - "4000:4000"
+    depends_on:
+      - user-service
+      - product-service
+    networks:
+      - ecommerce-network
+
+networks:
+  ecommerce-network:
+    driver: bridge
